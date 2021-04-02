@@ -23,9 +23,6 @@ module Doorkeeper
   class << self
     def configure(&block)
       @config = Config::Builder.new(&block).build
-      setup_orm_adapter
-      setup_orm_models
-      setup_application_owner if @config.enable_application_owner?
       @config
     end
 
@@ -36,6 +33,12 @@ module Doorkeeper
     end
 
     alias config configuration
+
+    def setup_orm
+      setup_orm_adapter
+      setup_orm_models
+      setup_application_owner if @config && @config.enable_application_owner?
+    end
 
     def setup_orm_adapter
       @orm_adapter = "doorkeeper/orm/#{configuration.orm}".classify.constantize
