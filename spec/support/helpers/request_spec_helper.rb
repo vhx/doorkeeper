@@ -65,11 +65,15 @@ module RequestSpecHelper
   end
 
   def translated_error_message(key)
-    I18n.translate key, scope: [:doorkeeper, :errors, :messages]
+    I18n.translate key, scope: %i[doorkeeper errors messages]
   end
 
   def response_status_should_be(status)
     expect(page.driver.response.status.to_i).to eq(status)
+  end
+
+  def create_access_token(authorization_code, client, code_verifier = nil)
+    page.driver.post token_endpoint_url(code: authorization_code, client: client, code_verifier: code_verifier)
   end
 end
 
