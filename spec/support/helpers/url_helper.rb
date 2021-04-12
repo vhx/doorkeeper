@@ -5,7 +5,9 @@ module UrlHelper
       client_id: options[:client_id]     || (options[:client] ? options[:client].uid : nil),
       client_secret: options[:client_secret] || (options[:client] ? options[:client].secret : nil),
       redirect_uri: options[:redirect_uri]  || (options[:client] ? options[:client].redirect_uri : nil),
-      grant_type: options[:grant_type]    || 'authorization_code'
+      grant_type: options[:grant_type]    || 'authorization_code',
+      code_verifier: options[:code_verifier],
+      code_challenge_method: options[:code_challenge_method]
     }
     "/oauth/token?#{build_query(parameters)}"
   end
@@ -28,7 +30,9 @@ module UrlHelper
       redirect_uri: options[:redirect_uri]  || options[:client].redirect_uri,
       response_type: options[:response_type] || 'code',
       scope: options[:scope],
-      state: options[:state]
+      state: options[:state],
+      code_challenge: options[:code_challenge],
+      code_challenge_method: options[:code_challenge_method]
     }.reject { |k, v| v.blank? }
     "/oauth/authorize?#{build_query(parameters)}"
   end
