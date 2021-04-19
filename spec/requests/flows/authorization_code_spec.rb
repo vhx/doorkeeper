@@ -177,10 +177,15 @@ feature 'Authorization Code Flow' do
         click_on 'Authorize'
 
         authorization_code = current_params['code']
-        page.driver.post token_endpoint_url(code: authorization_code, client_id: @client.uid,
-                                            redirect_uri: @client.redirect_uri, code_verifier: code_verifier)
-        driver_should_have_json 'error', 'invalid_client'
-        driver_should_not_have_json 'access_token'
+        page.driver.post token_endpoint_url(
+          code: authorization_code,
+          client_id: @client.uid,
+          redirect_uri: @client.redirect_uri,
+          code_verifier: code_verifier
+        )
+
+        driver_should_not_have_json 'error'
+        driver_should_have_json 'access_token', Doorkeeper::AccessToken.first.token
       end
 
       scenario 'mobile app requests an access token with authorization code but no code verifier' do
