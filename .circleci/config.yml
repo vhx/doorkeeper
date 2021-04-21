@@ -1,0 +1,38 @@
+version: 2.1
+jobs:
+  test:
+    parameters:
+      bundler_version:
+        type: 'string'
+      gemfile:
+        type: 'string'
+        default: 'Gemfile'
+      ruby_version:
+        type: 'string'
+    docker:
+      - image: circleci/ruby:<< parameters.ruby_version >>
+        auth:
+          username: $DOCKER_HUB_USERNAME
+          password: $DOCKER_HUB_PASSWORD
+    environment:
+      BUNDLE_GEMFILE: << parameters.gemfile >>
+    steps:
+      - checkout
+      - run:
+          name: Install Ruby dependencies
+          command: |
+            gem install bundler -v '<< parameters.bundler_version >>'
+            bundle _<< parameters.bundler_version >>_ install
+      - run:
+          name: Run tests
+          command: bundle _<< parameters.bundler_version >>_ exec rake
+workflows:
+  ruby-2.7-rails-3.2:
+    jobs:
+      - test:
+          context:
+            - docker-hub-authentication
+            - rails-lts-authentication
+          bundler_version: '1.17.3'
+          gemfile: 'gemfiles/Gemfile.ruby27.rails32'
+          ruby_version: '2.7.3'
