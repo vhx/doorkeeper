@@ -22,6 +22,8 @@ ActiveRecord::Schema.define(version: 20141209001746) do
     t.datetime "created_at",                     null: false
     t.datetime "revoked_at"
     t.string   "scopes"
+    t.string   "code_challenge"
+    t.string   "code_challenge_method"
   end
 
   add_index "oauth_access_grants", ["token"], name: "index_oauth_access_grants_on_token", unique: true

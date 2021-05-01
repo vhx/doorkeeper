@@ -55,6 +55,18 @@ module RequestSpecHelper
     expect(JSON.parse(response.body)).not_to have_key(key)
   end
 
+  def driver_should_have_json(key, value)
+    expect(JSON.parse(page.driver.response.body).fetch(key)).to eq(value)
+  end
+
+  def driver_should_have_json_within(key, value, range)
+    expect(JSON.parse(page.driver.response.body).fetch(key)).to be_within(range).of(value)
+  end
+
+  def driver_should_not_have_json(key)
+    expect(JSON.parse(page.driver.response.body)).not_to have_key(key)
+  end
+
   def sign_in
     visit '/'
     click_on 'Sign in'
@@ -65,11 +77,15 @@ module RequestSpecHelper
   end
 
   def translated_error_message(key)
-    I18n.translate key, scope: [:doorkeeper, :errors, :messages]
+    I18n.translate key, scope: %i[doorkeeper errors messages]
   end
 
   def response_status_should_be(status)
     expect(page.driver.response.status.to_i).to eq(status)
+  end
+
+  def create_access_token(authorization_code, client, code_verifier = nil)
+    page.driver.post token_endpoint_url(code: authorization_code, client: client, code_verifier: code_verifier)
   end
 end
 
